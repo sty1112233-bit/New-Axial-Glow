@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axial-Glow — Portable Light</title>
+<meta name="description" content="Axial-Glow — a portable light exploring the relationship between axial structure, transparency and warm illumination.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400&display=swap');
+
+:root{
+  --bg:#f4f3ef;
+  --ink:#151515;
+  --muted:#77736d;
+  --line:rgba(21,21,21,.16);
+  --warm:#c96b43;
+  --max:1440px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Futura Light","Futura PT Light","Futura PT",Futura,Figtree,sans-serif;
+  font-weight:300;
+  letter-spacing:.025em;
+  line-height:1.55;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;width:100%;height:auto}
+button{font:inherit}
+.nav{
+  position:fixed;z-index:20;top:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 4vw;
+  mix-blend-mode:multiply;
+}
+.logo{font-size:18px;letter-spacing:.08em}
+.navlinks{display:flex;gap:28px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.navlinks a{opacity:.7}.navlinks a:hover{opacity:1}
+.hero{
+  min-height:100svh;position:relative;display:grid;align-items:end;
+  overflow:hidden;background:#050505;color:#fff;
+}
+.hero-bg{position:absolute;inset:0;opacity:.62}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.55))}
+.hero-content{position:relative;z-index:2;padding:0 6vw 7vw;max-width:1100px}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:22px;opacity:.75}
+h1{font-size:clamp(64px,12vw,180px);font-weight:300;line-height:.82;margin:0;letter-spacing:-.045em}
+.hero-sub{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-top:38px;max-width:900px}
+.hero-sub p{margin:0;max-width:480px;font-size:15px;color:rgba(255,255,255,.78)}
+.scroll{font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+
+.section{max-width:var(--max);margin:auto;padding:12vw 6vw}
+.section-head{display:grid;grid-template-columns:1fr 2fr;gap:40px;margin-bottom:70px}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.section h2{font-size:clamp(38px,5vw,76px);font-weight:300;line-height:.98;letter-spacing:-.035em;margin:0}
+.lead{font-size:20px;max-width:720px;color:#45423e}
+
+.manifesto{background:#171717;color:#eee;max-width:none;padding-left:6vw;padding-right:6vw}
+.manifesto .inner{max-width:var(--max);margin:auto}
+.manifesto h2{font-size:clamp(42px,7vw,100px);max-width:1000px}
+.manifesto p{max-width:650px;color:#aaa;margin-top:40px}
+
+.image-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.image-grid .wide{grid-column:1/-1}
+.card{overflow:hidden;background:#e9e7e2;position:relative}
+.card img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.card:hover img{transform:scale(1.025)}
+.caption{padding:16px 2px 0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+.story{display:grid;grid-template-columns:1.05fr .95fr;gap:7vw;align-items:center}
+.story-img{background:#ddd}
+.story-copy h3{font-size:clamp(32px,4vw,58px);font-weight:300;line-height:1.03;margin:18px 0 24px}
+.story-copy p{max-width:530px;color:#625e58}
+
+.specs{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.spec-row{display:grid;grid-template-columns:1fr 2fr;padding:20px 0;border-bottom:1px solid var(--line);font-size:14px}
+.spec-row:last-child{border-bottom:0}
+.spec-row span:first-child{color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-size:10px}
+
+.cta{
+  min-height:65vh;background:#111;color:#fff;display:grid;place-items:center;text-align:center;
+}
+.cta h2{font-size:clamp(48px,9vw,120px);font-weight:300;line-height:.9;margin:0 0 35px}
+.cta a{display:inline-block;border:1px solid rgba(255,255,255,.35);padding:13px 22px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;transition:.25s}
+.cta a:hover{background:#fff;color:#111}
+
+.footer{padding:32px 6vw;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+.lightbox{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;padding:5vw}
+.lightbox.open{display:flex}
+.lightbox img{max-height:90vh;max-width:90vw;object-fit:contain;width:auto}
+.close{position:absolute;right:30px;top:24px;color:#fff;border:0;background:none;font-size:28px;font-weight:300;cursor:pointer}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:800px){
+  .navlinks{display:none}
+  .hero-content{padding:0 7vw 12vw}
+  .hero-sub{display:block}.scroll{margin-top:25px}
+  .section{padding:20vw 7vw}
+  .section-head,.story{grid-template-columns:1fr;gap:25px}
+  .image-grid{grid-template-columns:1fr}
+  .image-grid .wide{grid-column:auto}
+  .spec-row{grid-template-columns:1fr;gap:7px}
+  .footer{display:block}.footer div+div{margin-top:8px}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="logo" href="#top">Axial-Glow</a>
+  <nav class="navlinks">
+    <a href="#concept">Concept</a>
+    <a href="#details">Details</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#specs">Specs</a>
+  </nav>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-bg"><img src="assets/axial-01.jpg" alt="Axial-Glow in an interior"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content reveal">
+    <div class="kicker">Product Design / Lighting</div>
+    <h1>Axial-Glow</h1>
+    <div class="hero-sub">
+      <p>A portable light shaped around an axial structure — balancing transparency, material contrast and a warm inner glow.</p>
+      <div class="scroll">Scroll to explore ↓</div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="concept">
+  <div class="section-head">
+    <div class="eyebrow">01 / Concept</div>
+    <div>
+      <h2>Light, structure<br>and a visible axis.</h2>
+      <p class="lead">Axial-Glow turns the central lighting mechanism into the visual core of the product. A translucent body reveals the vertical structure while the soft upper shade controls the atmosphere.</p>
+    </div>
+  </div>
+  <div class="card wide"><img src="assets/axial-00.png" alt="Axial-Glow concept sketches"></div>
+  <div class="caption">Early form exploration / Axial studies</div>
+</section>
+
+<section class="manifesto">
+  <div class="inner section reveal">
+    <div class="eyebrow">02 / Design Language</div>
+    <h2>Transparent outside.<br>Warm inside.</h2>
+    <p>The product deliberately keeps its mechanism visually present. The clear lower structure catches and refracts light, creating a changing appearance as the viewing angle moves around the lamp.</p>
+  </div>
+</section>
+
+<section class="section" id="details">
+  <div class="section-head reveal">
+    <div class="eyebrow">03 / Product Details</div>
+    <div><h2>A compact object<br>with layered depth.</h2></div>
+  </div>
+  <div class="image-grid">
+    <div class="card reveal"><img src="assets/axial-02.jpg" alt="Axial-Glow front view"></div>
+    <div class="card reveal"><img src="assets/axial-03.jpg" alt="Axial-Glow three-quarter view"></div>
+    <div class="card wide reveal"><img src="assets/axial-04.png" alt="Axial-Glow side detail"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="story">
+    <div class="story-img reveal"><img src="assets/axial-05.png" alt="Axial-Glow opposite side"></div>
+    <div class="story-copy reveal">
+      <div class="eyebrow">Material / Light</div>
+      <h3>Refraction becomes part of the form.</h3>
+      <p>The transparent lower body is not treated as a neutral shell. Its vertical geometry catches highlights and creates a layered visual rhythm beneath the warm diffuser.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gallery">
+  <div class="section-head reveal">
+    <div class="eyebrow">04 / In Context</div>
+    <div><h2>Designed to belong<br>where people live.</h2></div>
+  </div>
+  <div class="image-grid">
+    <div class="card wide reveal"><img src="assets/axial-06.png" alt="Axial-Glow in a kitchen interior"></div>
+    <div class="card reveal"><img src="assets/axial-07.png" alt="Axial-Glow in a compact kitchen"></div>
+    <div class="card reveal"><img src="assets/axial-08.png" alt="Axial-Glow on a dining table"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head reveal">
+    <div class="eyebrow">05 / Construction</div>
+    <div><h2>Every layer has<br>a reason to exist.</h2></div>
+  </div>
+  <div class="image-grid">
+    <div class="card wide reveal"><img src="assets/axial-09.png" alt="Axial-Glow internal construction"></div>
+    <div class="card wide reveal"><img src="assets/axial-10.png" alt="Axial-Glow exploded view"></div>
+  </div>
+</section>
+
+<section class="section" id="specs">
+  <div class="section-head reveal">
+    <div class="eyebrow">06 / Specification</div>
+    <div><h2>Axial-Glow</h2><p class="lead">A study in portable illumination, transparent structure and warm ambient light.</p></div>
+  </div>
+  <div class="specs reveal">
+    <div class="spec-row"><span>Product</span><span>Axial-Glow</span></div>
+    <div class="spec-row"><span>Category</span><span>Portable / Ambient Lighting</span></div>
+    <div class="spec-row"><span>Design Focus</span><span>Axial structure · transparency · warm illumination</span></div>
+    <div class="spec-row"><span>Visual Character</span><span>Soft / Technical / Sculptural</span></div>
+    <div class="spec-row"><span>Materials</span><span>Translucent polymer · metal components · diffusing shade</span></div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="reveal">
+    <div class="eyebrow">Axial-Glow</div>
+    <h2>Glow around<br>the axis.</h2>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div>Axial-Glow / Product Design</div>
+  <div>© 2026</div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="close" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const box=document.getElementById('lightbox');
+const boxImg=document.getElementById('lightboxImg');
+document.querySelectorAll('.card img').forEach(img=>{
+  img.style.cursor='zoom-in';
+  img.addEventListener('click',()=>{
+    boxImg.src=img.src; boxImg.alt=img.alt; box.classList.add('open');
+  });
+});
+box.addEventListener('click',(e)=>{ if(e.target===box || e.target.classList.contains('close')) box.classList.remove('open'); });
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') box.classList.remove('open'); });
+</script>
+</body>
+</html>
